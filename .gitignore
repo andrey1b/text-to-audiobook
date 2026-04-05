@@ -1,0 +1,20 @@
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Backup versions (keep only main file)
+text_to_audiobook_v*.py
+
+# Logs
+_build_log.txt
+_debug.txt
+
+# C# build output
+TextToAudiobookCSharp/bin/
+TextToAudiobookCSharp/obj/

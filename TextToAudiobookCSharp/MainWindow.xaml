@@ -1,0 +1,299 @@
+<Window x:Class="TextToAudiobookCSharp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Text to Audiobook v14 (C#) — Online + Piper + Offline"
+        Width="740" Height="870" MinWidth="700" MinHeight="780"
+        Background="{StaticResource BgDarkBrush}"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="24,20,24,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="200" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1.2*" MinHeight="150" />
+        </Grid.RowDefinitions>
+
+        <!-- ═══ Верхняя панель: настройки (скроллируемая) ═══ -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!-- ═══ Заголовок ═══ -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="Text to Audiobook  v14  (C#)"
+                               FontSize="26" FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock Text="Edge TTS + Piper + Windows SAPI"
+                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Bottom" Margin="12,0,0,4" />
+                </StackPanel>
+
+                <!-- ═══ Баннер «Продолжить» ═══ -->
+                <Border x:Name="ResumeCard" Visibility="Collapsed"
+                        Background="#1B2838" CornerRadius="14"
+                        BorderBrush="{StaticResource SuccessBrush}" BorderThickness="1"
+                        Padding="16,12" Margin="0,8,0,3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="ResumeLabel" Grid.Column="0"
+                                   FontSize="14" FontWeight="Bold"
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   VerticalAlignment="Center" />
+                        <Button x:Name="BtnResume" Grid.Column="1"
+                                Content="Продолжить" Width="120" Height="34"
+                                Background="{StaticResource SuccessBrush}"
+                                Style="{StaticResource RoundButton}"
+                                Click="BtnResume_Click" />
+                    </Grid>
+                </Border>
+
+                <!-- ═══ Недавние книги ═══ -->
+                <Border x:Name="HistoryCard" Visibility="Collapsed"
+                        Background="{StaticResource BgCardBrush}" CornerRadius="14"
+                        Padding="16,12" Margin="0,3">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Недавние книги" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <ComboBox x:Name="ComboHistory" Width="420"
+                                  Style="{StaticResource DarkComboBox}"
+                                  SelectionChanged="ComboHistory_SelectionChanged" />
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══ Карточка: Исходный файл ═══ -->
+                <Border Background="{StaticResource BgCardBrush}" CornerRadius="14"
+                        Padding="16,12" Margin="0,3">
+                    <StackPanel>
+                        <TextBlock Text="Исходный файл" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="TxtInputFile" Grid.Column="0"
+                                     Style="{StaticResource DarkTextBox}" Height="38" />
+                            <Button Grid.Column="1" Content="Обзор" Width="90" Height="38"
+                                    Background="{StaticResource AccentBrush}"
+                                    Style="{StaticResource RoundButton}" Margin="10,0,0,0"
+                                    Click="BtnBrowseInput_Click" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══ Карточка: Папка сохранения ═══ -->
+                <Border Background="{StaticResource BgCardBrush}" CornerRadius="14"
+                        Padding="16,12" Margin="0,3">
+                    <StackPanel>
+                        <TextBlock Text="Папка для сохранения" FontSize="13"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="TxtOutputDir" Grid.Column="0"
+                                     Style="{StaticResource DarkTextBox}" Height="38" />
+                            <Button Grid.Column="1" Content="Обзор" Width="90" Height="38"
+                                    Background="{StaticResource AccentBrush}"
+                                    Style="{StaticResource RoundButton}" Margin="10,0,0,0"
+                                    Click="BtnBrowseOutput_Click" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══ Карточка: Настройки ═══ -->
+                <Border Background="{StaticResource BgCardBrush}" CornerRadius="14"
+                        Padding="16,12" Margin="0,3">
+                    <StackPanel>
+                        <!-- Режим TTS -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Режим" FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ComboBox x:Name="ComboTtsMode" Grid.Column="1" Width="280"
+                                      Style="{StaticResource DarkComboBox}"
+                                      SelectionChanged="ComboTtsMode_SelectionChanged" />
+                            <TextBlock x:Name="LblModeStatus" Grid.Column="2"
+                                       FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" Margin="12,0,0,0" />
+                        </Grid>
+
+                        <!-- Голос -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Голос" FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ComboBox x:Name="ComboVoice" Grid.Column="1"
+                                      Style="{StaticResource DarkComboBox}" />
+                        </Grid>
+
+                        <!-- Скорость -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Скорость" FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <Slider x:Name="SliderSpeed" Grid.Column="1"
+                                    Minimum="-50" Maximum="50" Value="0"
+                                    TickFrequency="10" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    ValueChanged="SliderSpeed_ValueChanged" />
+                            <TextBlock x:Name="LblSpeed" Grid.Column="2" Text="+0%"
+                                       FontSize="13" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Кодировка -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Кодировка" FontSize="13"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" />
+                            <ComboBox x:Name="ComboEncoding" Grid.Column="1"
+                                      Style="{StaticResource DarkComboBox}" />
+                        </Grid>
+
+                        <!-- Чекбоксы -->
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <CheckBox x:Name="ChkMerge" Content="Объединить в один файл"
+                                      IsChecked="True"
+                                      Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"
+                                      Margin="0,0,24,0" />
+                            <CheckBox x:Name="ChkNoChapters" Content="Не разбивать на главы"
+                                      Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <CheckBox x:Name="ChkDeleteFragments" Content="Удалить фрагменты после объединения"
+                                      IsChecked="False"
+                                      Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══ Кнопки управления ═══ -->
+                <Grid Margin="0,6,0,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="BtnOpenFolder" Grid.Column="0"
+                            Content="Открыть папку" Height="42" Padding="14,8"
+                            Background="{StaticResource BgInputBrush}"
+                            Foreground="{StaticResource TextSecondaryBrush}" FontWeight="Normal"
+                            Style="{StaticResource RoundButton}"
+                            Click="BtnOpenFolder_Click" />
+
+                    <Button x:Name="BtnPause" Grid.Column="1"
+                            Content="Пауза" Height="42" Width="110" Margin="10,0,0,0"
+                            Background="{StaticResource WarningBrush}"
+                            Style="{StaticResource RoundButton}"
+                            IsEnabled="False"
+                            Click="BtnPause_Click" />
+
+                    <Button x:Name="BtnStop" Grid.Column="2"
+                            Content="Стоп" Height="42" Width="90" Margin="10,0,0,0"
+                            Background="{StaticResource DangerBrush}"
+                            Style="{StaticResource RoundButton}"
+                            IsEnabled="False"
+                            Click="BtnStop_Click" />
+
+                    <Button x:Name="BtnStart" Grid.Column="5"
+                            Content="Начать конвертацию" Height="42" Padding="20,8"
+                            Background="{StaticResource AccentBrush}"
+                            Style="{StaticResource RoundButton}"
+                            Click="BtnStart_Click" />
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ═══ Разделитель (перетаскиваемый) ═══ -->
+        <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch"
+                       Background="#2A2A40" Margin="0,2" />
+
+        <!-- ═══ Нижняя панель: Прогресс и лог ═══ -->
+        <Border Grid.Row="2" Background="{StaticResource BgCardBrush}" CornerRadius="14"
+                Padding="16,12" Margin="0,3,0,0">
+            <DockPanel>
+                <!-- Заголовок прогресса -->
+                <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Прогресс" FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock x:Name="LblEta" Grid.Column="2" FontSize="13"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,16,0" />
+                    <TextBlock x:Name="LblPercent" Grid.Column="3" Text="0%"
+                               FontSize="13" FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}" />
+                </Grid>
+
+                <!-- Прогресс-бар -->
+                <Border DockPanel.Dock="Top" CornerRadius="5" Height="10"
+                        Background="{StaticResource BgInputBrush}" Margin="0,0,0,8">
+                    <Border x:Name="ProgressFill" CornerRadius="5" Height="10"
+                            Background="{StaticResource AccentBrush}"
+                            HorizontalAlignment="Left" Width="0" />
+                </Border>
+
+                <!-- Шрифт лога -->
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
+                    <TextBlock Text="Шрифт лога" FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox x:Name="ComboLogFont" Width="170"
+                              Style="{StaticResource DarkComboBox}"
+                              SelectionChanged="ComboLogFont_SelectionChanged" />
+                    <TextBlock Text="Размер" FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="16,0,8,0" />
+                    <ComboBox x:Name="ComboLogFontSize" Width="70"
+                              Style="{StaticResource DarkComboBox}"
+                              SelectionChanged="ComboLogFontSize_SelectionChanged" />
+                </StackPanel>
+
+                <!-- Лог -->
+                <TextBox x:Name="TxtLog" IsReadOnly="True"
+                         TextWrapping="Wrap" AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         Background="{StaticResource LogBgBrush}"
+                         Foreground="{StaticResource LogFgBrush}"
+                         FontFamily="Consolas" FontSize="14"
+                         BorderThickness="0" Padding="12,8"
+                         VerticalAlignment="Stretch" />
+            </DockPanel>
+        </Border>
+
+    </Grid>
+</Window>
