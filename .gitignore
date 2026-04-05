@@ -18,3 +18,4 @@ _debug.txt
 # C# build output
 TextToAudiobookCSharp/bin/
 TextToAudiobookCSharp/obj/
+TextToAudiobookCSharp/publish/
